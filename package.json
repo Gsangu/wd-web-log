@@ -1,7 +1,7 @@
 {
   "name": "wd-web-log",
   "description": "a simple web log sdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "author": "Gsangu <gozhushi@qq.com>",
   "license": "MIT",
   "main": "index.js",

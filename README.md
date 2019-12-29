@@ -7,7 +7,7 @@
 ```
 npm run start
 ```
-浏览器打开examples文件夹下test.html即可调试
+浏览器打开examples文件夹下html即可调试
 
 ## 构建
 ```
@@ -15,6 +15,10 @@ npm run build
 ```
 
 ## 配置
+#### npm
+```
+npm i wd-web-log
+```
 ```js
 // config
 const config = {
@@ -28,7 +32,7 @@ const config = {
   type: 'mta',
   // 上报平台配置
   config: {},
-  // 发送事件
+  // 发送事件 reporter带有send方法，用于上报事件，里面包含官方的所有方法
   onSend: (sendData, reporter, event) => {}
 }
 
@@ -46,4 +50,16 @@ Logger.send({
   event: ''
 })
 Logger.pgv()
+```
+### 浏览器
+```html
+<script src="https://cdn.jsdelivr.net/npm/wd-web-log/dist/wd-web-log.js"></script>
+<script>
+  var logger = WdWebLog.default(config);
+  logger.pgv();
+  document.querySelector('#test').addEventListener('click', function (e) {
+    logger.send('test');
+    // logger.send({});
+  })
+</script>
 ```
