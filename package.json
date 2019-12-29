@@ -1,10 +1,10 @@
 {
   "name": "wd-web-log",
   "description": "a simple web log sdk",
-  "version": "0.0.3",
+  "version": "1.0.1",
   "author": "Gsangu <gozhushi@qq.com>",
   "license": "MIT",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "./node_modules/.bin/webpack -w",
     "build": "NODE_ENV=production ./node_modules/.bin/webpack --config webpack.config.js"
