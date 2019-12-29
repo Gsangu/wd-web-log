@@ -1,0 +1,33 @@
+{
+  "name": "wd-web-log",
+  "description": "a simple web log sdk",
+  "version": "0.0.2",
+  "author": "Gsangu <gozhushi@qq.com>",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/webpack -w",
+    "build": "NODE_ENV=production ./node_modules/.bin/webpack --config webpack.config.js"
+  },
+  "keywords": [
+    "web",
+    "log sdk"
+  ],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
+  "dependencies": {
+    "mta-h5-analysis": "^2.0.15"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-3": "^6.24.1",
+    "cross-env": "^5.0.5",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.9.1"
+  }
+}

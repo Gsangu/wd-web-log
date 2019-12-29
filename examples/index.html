@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>web-log</title>
+  <script src="../dist/wd-web-log.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <button id="test">
+        test
+      </button>
+    </div>
+  </div>
+  <script>
+    var logger = WdWebLog.default({
+      debug: true,
+      config: {}
+    });
+    logger.pgv();
+    document.querySelector('#test').addEventListener('click', function (e) {
+      logger.send('test');
+    })
+  </script>
+</body>
+</html>

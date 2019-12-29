@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>vue-log</title>
+  <script src="https://unpkg.com/vue@2.6.11/dist/vue.min.js"></script>
+  <script src="../dist/wd-web-log.js"></script>
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <button v-log="'test'">
+        test
+      </button>
+      <button v-log="{event:'test1',data:{test:'1'}}">
+        test1
+      </button>
+      <button @click="sendData">
+        test-function
+      </button>
+    </div>
+  </div>
+  <script>
+    Vue.use(WdVueLog, {
+      debug: true,
+      config: {}
+    })
+    var app = new Vue({
+      el: '#app',
+      methods: {
+        sendData: function(params) {
+          this.$stat({
+            event: 'functionData'
+          })
+        }
+      }
+    })
+  </script>
+</body>
+</html>
