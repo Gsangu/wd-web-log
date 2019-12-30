@@ -1,13 +1,17 @@
 {
   "name": "wd-web-log",
   "description": "a simple web log sdk",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "author": "Gsangu <gozhushi@qq.com>",
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
     "start": "./node_modules/.bin/webpack -w",
     "build": "NODE_ENV=production ./node_modules/.bin/webpack --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Gsangu/wd-web-log.git"
   },
   "keywords": [
     "web",
@@ -18,6 +22,9 @@
     "last 2 versions",
     "not ie <= 8"
   ],
+  "bugs": {
+    "url": "https://github.com/Gsangu/wd-web-log/issues"
+  },
   "dependencies": {
     "mta-h5-analysis": "^2.0.15"
   },

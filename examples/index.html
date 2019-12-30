@@ -13,6 +13,9 @@
       <button id="test">
         test
       </button>
+      <button id="error">
+        error
+      </button>
     </div>
   </div>
   <script>
@@ -23,6 +26,9 @@
     logger.pgv();
     document.querySelector('#test').addEventListener('click', function (e) {
       logger.send('test');
+    })
+    document.querySelector('#error').addEventListener('click', function (e) {
+      throw new Error('test error')
     })
   </script>
 </body>

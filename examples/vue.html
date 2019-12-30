@@ -11,14 +11,18 @@
 <body>
   <div id="app">
     <div class="container">
+      <div v-stat="'view-index'">view send</div>
       <button v-log="'test'">
         test
       </button>
       <button v-log="{event:'test1',data:{test:'1'}}">
-        test1
+        testSendData
       </button>
       <button @click="sendData">
         test-function
+      </button>
+      <button @click="sendError">
+        error
       </button>
     </div>
   </div>
@@ -34,6 +38,9 @@
           this.$stat({
             event: 'functionData'
           })
+        },
+        sendError: function(params) {
+          throw new Error('test error')
         }
       }
     })

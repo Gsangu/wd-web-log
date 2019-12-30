@@ -26,14 +26,18 @@ const config = {
   autoClick: false,
   // 是否开启自动上报 若关闭自行请在在事件中手动上报
   autoSend: true,
+  // 是否开启异常上报
+  autoError: true,
   // 开启debug
   debug: false,
   // 上报平台 目前支持 mta
   type: 'mta',
   // 上报平台配置
   config: {},
-  // 发送事件 reporter带有send方法，用于上报事件，里面包含官方的所有方法
-  onSend: (sendData, reporter, event) => {}
+  // 发送事件 reporter带有send方法，用于上报事件，里面包含官方的所有方法 (事件详情，事件数据，上报平台实例，点击元素事件对象)
+  onSend: (sendEvent, sendData, reporter, event) => {},
+  // 错误捕捉
+  onError: (error) => {}
 }
 
 // vue
@@ -46,6 +50,7 @@ this.$stat({
 })
 
 import Logger from 'wd-web-log'
+// mta example
 Logger.send({
   event: ''
 })
