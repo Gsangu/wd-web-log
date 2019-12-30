@@ -23,12 +23,12 @@ const WebLogger = function ({debug = false, config = {}}) {
     ignoreParams: ignoreParams // 开启url参数上报时，可忽略部分参数拼接上报
   })
   return {
-    send (options = {}) {
+    send (options = {}, data = '') {
       if (!options) {
         return
       }
       if (typeof options === 'string') {
-        options = { event: options }
+        options = { event: options, data }
       }
       const defaultOption = {type: 'click', event: '', data: {}}
       options = Object.assign({}, defaultOption, options)

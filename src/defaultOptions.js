@@ -12,6 +12,8 @@ export default {
   autoClick: false,
   // 是否开启自动上报 若关闭自行请在在事件中手动上报
   autoSend: true,
+  // 是否开启异常上报
+  autoError: true,
   // 开启debug
   debug: false,
   // 上报平台 目前支持 mta
@@ -19,5 +21,7 @@ export default {
   // 上报平台配置
   config: {},
   // 发送事件
-  onSend: (sendData, reporter, event) => {}
+  onSend: (sendEvent, sendData, reporter, event) => {},
+  // 错误捕捉
+  onError: (error) => {}
 }

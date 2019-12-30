@@ -11,33 +11,47 @@ import defaultOptions from '../defaultOptions'
 const logger = {
   mta
 }
-let reporter = null
-let options = null
 const Logger = (logOptions = {}) => {
-  options = Object.assign({}, defaultOptions, logOptions)
+  const options = Object.assign({}, defaultOptions, logOptions)
+  Logger.options = options
   if (!logger.hasOwnProperty(options.type)) {
     throw new Error('上报平台不存在或者尚未支持')
   }
-  reporter = logger[options.type](options)
+  Logger.reporter = logger[options.type](options)
   if (options.autoClick) {
     document.addEventListener('click', function (event) {
       const targetElement = event.target
       const text = targetElement.innerText || targetElement.value
       if (text) {
-        Logger.send(`auto_${text}`, event)
+        Logger.send(`auto_${text}`, '', event)
       }
     })
   }
-  return reporter
+  if (options.autoError) {
+    window.onerror = function(errorMessage, scriptURI, lineNumber, columnNumber, errorObj) {
+      const errorData = {
+        errorMessage,
+        scriptURI,
+        lineNumber,
+        columnNumber,
+        errorObj
+      }
+      Logger.send(`error`, errorData)
+      Logger.options.onError && Logger.options.onError(errorData)
+    }
+  }
+  return Logger.reporter
 }
 
-Logger.send = (value, event) => {
+Logger.send = (value, data , event) => {
+  const options = Logger.options
+  const reporter = Logger.reporter
   if (!reporter || !options) {
     throw new Error('实例不存在')
   }
   if (options.autoSend) {
-    reporter.send(value)
+    reporter.send(value, data)
   }
-  options.onSend && options.onSend(value, reporter, event)
+  options.onSend && options.onSend(value, data, reporter, event)
 }
 export default Logger
