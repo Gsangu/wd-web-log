@@ -1,7 +1,7 @@
 {
   "name": "wd-web-log",
   "description": "a simple web log sdk",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "author": "Gsangu <gozhushi@qq.com>",
   "license": "MIT",
   "main": "src/index.js",
@@ -26,6 +26,8 @@
     "url": "https://github.com/Gsangu/wd-web-log/issues"
   },
   "dependencies": {
+    "@babel/preset-env": "^7.7.7",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "mta-h5-analysis": "^2.0.15"
   },
   "devDependencies": {
