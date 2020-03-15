@@ -1,7 +1,6 @@
 import vue from './vue'
-import Logger from './logger'
+import Logger from './logger/index'
 
-const VueLogger = vue
-export { VueLogger }
+Logger.Vue = vue
 
 export default Logger

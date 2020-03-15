@@ -14,7 +14,7 @@ const logger = {
 const Logger = (logOptions = {}) => {
   const options = Object.assign({}, defaultOptions, logOptions)
   Logger.options = options
-  if (!logger.hasOwnProperty(options.type)) {
+  if (!(options.type in logger)) {
     throw new Error('上报平台不存在或者尚未支持')
   }
   Logger.reporter = logger[options.type](options)
@@ -36,7 +36,7 @@ const Logger = (logOptions = {}) => {
         colno,
         error
       }
-      Logger.send(`error`, errorData)
+      Logger.send('error', errorData)
       Logger.options.onError && Logger.options.onError(errorData, Logger)
     }
   }

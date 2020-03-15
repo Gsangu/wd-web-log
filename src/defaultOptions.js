@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
  * FileName: defaultOptions.js
  * Project: wd-web-log
@@ -9,7 +10,7 @@
 
 export default {
   // 当前版本
-  version: process.env.version,
+  version: SDK_VERSION,
   // 是否自动收集点击事件
   autoClick: false,
   // 是否开启自动上报 若关闭自行请在在事件中手动上报

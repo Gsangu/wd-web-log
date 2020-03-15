@@ -22,7 +22,7 @@ const WebLogger = function ({debug = false, config = {}}) {
     performanceMonitor: performanceMonitor, // 是否开启性能监控
     ignoreParams: ignoreParams // 开启url参数上报时，可忽略部分参数拼接上报
   })
-  return {
+  return Object.assign({}, {
     send (options = {}, data = '') {
       if (!options) {
         return
@@ -37,8 +37,7 @@ const WebLogger = function ({debug = false, config = {}}) {
         console.log(`event_type=${options.type}, event_id=${options.event}, data=`, { data: options.data })
       }
     },
-    ...MtaH5
-  }
+  }, MtaH5)
   // MtaH5.pgv()
 }
 
