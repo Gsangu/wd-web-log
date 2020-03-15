@@ -39,14 +39,17 @@ const config = {
   // 错误捕捉
   onError: (error) => {}
 }
-
+```
+## 使用
+```js
 // vue
 import { VueLogger } from 'wd-web-log'
 Vue.use(VueLogger, config)
 
-// use v-log="'event'" or v-log="{event:''}"
+// use v-log="'event'" or v-log="{event:'',data:{}}"
 this.$stat({
-  event: ''
+  event: '',
+  data: {}
 })
 
 import Logger from 'wd-web-log'
@@ -54,14 +57,36 @@ import Logger from 'wd-web-log'
 Logger.send({
   event: ''
 })
-Logger.pgv()
+// mta 原生方法
+Logger.reporter.pgv()
 ```
 ### 浏览器
 ```html
 <script src="https://cdn.jsdelivr.net/npm/wd-web-log/dist/wd-web-log.js"></script>
 <script>
-  var logger = WdWebLog.default(config);
-  logger.pgv();
+    var logger = WdWebLog({
+      debug: true,
+      // autoSend: true,
+      autoSend: false,
+      // 是否开启异常上报
+      autoError: true,
+      // 开启debug
+      debug: true,
+      // 上报平台 目前支持 mta
+      type: 'mta',
+      // 上报平台配置
+      config: {},
+      // 发送事件
+      onSend: (sendEvent, sendData, reporter, event) => {
+        console.log(sendEvent)
+        // reporter.send(sendEvent, sendData)
+        reporter.send('sendEvent' + sendEvent, sendData)
+      },
+      // 错误捕捉
+      onError: (error) => {
+        console.log('异常捕捉:', error)
+      }
+    });
   document.querySelector('#test').addEventListener('click', function (e) {
     logger.send('test');
     // logger.send({});

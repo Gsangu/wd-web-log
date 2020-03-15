@@ -11,7 +11,7 @@
 <body>
   <div id="app">
     <div class="container">
-      <div v-stat="'view-index'">view send</div>
+      <div v-stat="'view_index'">view send</div>
       <button v-log="'test'">
         test
       </button>
@@ -29,7 +29,27 @@
   <script>
     Vue.use(WdVueLog, {
       debug: true,
-      config: {}
+      // autoSend: true,
+      autoSend: false,
+      // 是否开启异常上报
+      autoError: true,
+      // 开启debug
+      debug: true,
+      // 上报平台 目前支持 mta
+      type: 'mta',
+      // 上报平台配置
+      config: {},
+      // 重写发送事件
+      onSend: (sendEvent, sendData, reporter, event) => {
+        if (typeof sendEvent === 'object') {
+          sendEvent = sendEvent.event
+          sendData = sendEvent.data || ''
+        }
+        // reporter.send(sendEvent, sendData)
+        reporter.send('debug_' + sendEvent, sendData)
+      },
+      // 错误捕捉
+      onError: (error) => {}
     })
     var app = new Vue({
       el: '#app',

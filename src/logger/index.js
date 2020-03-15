@@ -28,19 +28,19 @@ const Logger = (logOptions = {}) => {
     })
   }
   if (options.autoError) {
-    window.onerror = function(errorMessage, scriptURI, lineNumber, columnNumber, errorObj) {
+    window.onerror = function(event, source, lineno, colno, error) {
       const errorData = {
-        errorMessage,
-        scriptURI,
-        lineNumber,
-        columnNumber,
-        errorObj
+        event,
+        source,
+        lineno,
+        colno,
+        error
       }
       Logger.send(`error`, errorData)
-      Logger.options.onError && Logger.options.onError(errorData)
+      Logger.options.onError && Logger.options.onError(errorData, Logger)
     }
   }
-  return Logger.reporter
+  return Logger
 }
 
 Logger.send = (value, data , event) => {

@@ -10,6 +10,7 @@ module.exports = {
     library: 'WdWebLog',
     // libraryTarget 改为 umd 后，同时可用<script>标签引用组件
     libraryTarget: "umd",
+    libraryExport: 'default',
     umdNamedDefine: true
   },
   module: {
@@ -20,7 +21,7 @@ module.exports = {
         exclude: /node_modules/,
         query:
         {
-            presets: ['es2015'],
+            presets: ['env', 'stage-3'],
             plugins: ['transform-runtime']
         }
       }
