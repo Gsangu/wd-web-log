@@ -1,9 +1,9 @@
 {
   "name": "wd-web-log",
   "description": "a simple web log sdk",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "author": "Gsangu <gozhushi@qq.com>",
-  "main": "dist/wd-web-log.cjs.js",
+  "main": "src/index.js",
   "module": "dist/wd-web-log.esm.js",
   "browser": "dist/wd-web-log.js",
   "homepage": "https://github.com/Gsangu/wd-web-log",
