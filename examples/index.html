@@ -19,7 +19,8 @@
     </div>
   </div>
   <script>
-    var logger = WdWebLog({
+    var logger = null
+    WdWebLog({
       debug: true,
       // autoSend: true,
       autoSend: false,
@@ -27,25 +28,30 @@
       autoError: true,
       // 开启debug
       debug: true,
-      // 上报平台 目前支持 mta
-      type: 'mta',
+      // 上报平台 目前 mta,baidu,uweb
+      type: 'baidu',
       // 上报平台配置
-      config: {},
+      config: {
+        // src: '',
+        siteId: ''
+      },
       // 发送事件
       onSend: (sendEvent, sendData, reporter, event) => {
         console.log(sendEvent)
         // reporter.send(sendEvent, sendData)
-        reporter.send('sendEvent' + sendEvent, sendData)
+        reporter.send('sendEvent' + sendEvent)
       },
       // 错误捕捉
       onError: (error) => {
         console.log('异常捕捉:', error)
       }
-    });
+    }).then(function (log) {
+      logger = log
     // 调用mta原生方法
-    logger.reporter.pgv();
+      // logger.reporter.pgv();
+    });
     document.querySelector('#test').addEventListener('click', function (e) {
-      logger.send('test');
+      logger.send('test')
     })
     document.querySelector('#error').addEventListener('click', function (e) {
       throw new Error('test error')

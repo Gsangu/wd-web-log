@@ -7,17 +7,20 @@
  * Modified By: Gsan
  */
 import mta from './mta'
+import baidu from './baidu'
 import defaultOptions from '../defaultOptions'
 const logger = {
-  mta
+  mta,
+  baidu
 }
-const Logger = (logOptions = {}) => {
+
+const Logger = async (logOptions = {}) => {
   const options = Object.assign({}, defaultOptions, logOptions)
   Logger.options = options
   if (!(options.type in logger)) {
     throw new Error('上报平台不存在或者尚未支持')
   }
-  Logger.reporter = logger[options.type](options)
+  Logger.reporter = await logger[options.type](options)
   if (options.autoClick) {
     document.addEventListener('click', function (event) {
       const targetElement = event.target

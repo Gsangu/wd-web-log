@@ -41,6 +41,277 @@ const WebLogger = function ({debug = false, config = {}}) {
   // MtaH5.pgv()
 };
 
+let callbacks = [];
+
+const dynamicLoadScript = (src, isLoad) => {
+  return new Promise((resolve, reject) => {
+    const existingScript = document.getElementById(src);
+    const cb = function() {
+      resolve();
+    };
+
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = src; // src url for the third-party library being loaded.
+      script.id = src;
+      document.body.appendChild(script);
+      callbacks.push(cb);
+      const onEnd = 'onload' in script ? stdOnEnd : ieOnEnd;
+      onEnd(script);
+    }
+
+    if (existingScript && cb) {
+      if (isLoad()) {
+        cb();
+      } else {
+        callbacks.push(cb);
+      }
+    }
+
+    function stdOnEnd(script) {
+      script.onload = function() {
+        // this.onload = null here is necessary
+        // because even IE9 works not like others
+        this.onerror = this.onload = null;
+        for (const cb of callbacks) {
+          cb(null, script);
+        }
+        callbacks = null;
+      };
+      script.onerror = function() {
+        this.onerror = this.onload = null;
+        reject(new Error('Failed to load ' + src), script);
+      };
+    }
+
+    function ieOnEnd(script) {
+      script.onreadystatechange = function() {
+        if (this.readyState !== 'complete' && this.readyState !== 'loaded')
+          return
+        this.onreadystatechange = null;
+        for (const cb of callbacks) {
+          cb(null, script); // there is no way to catch loading errors in IE8
+        }
+        callbacks = null;
+      };
+    }
+  })
+};
+
+/*
+ * FileName: baidu.js
+ * Project: wd-web-log
+ * Author: Gsan
+ * File Created: Tuesday, 17th March 2020 3:02:40 pm
+ * Last Modified: Tuesday, 17th March 2020 3:02:41 pm
+ * Modified By: Gsan
+ */
+const deferred = {};
+deferred.promise = new Promise((resolve, reject) => {
+  deferred.resolve = resolve;
+  deferred.reject = reject;
+});
+const methods = [
+  'trackPageview', // 用于发送某个URL的PV统计请求，适用于统计AJAX、异步加载页面，友情链接，下载链接的流量 https://tongji.baidu.com/web/help/article?id=236&type=0
+  'trackEvent' // 用于发送页面上按钮等交互元素被触发时的事件统计请求。https://tongji.baidu.com/web/help/article?id=236&type=0
+];
+
+const baidu = {
+  /**
+  * internal user only
+  */
+  _cache: [],
+  /**
+   * internal user only, resolve the promise
+   */
+  _resolve () {
+    deferred.resolve();
+  },
+  /**
+     * internal user only, reject the promise
+     */
+  _reject () {
+    deferred.reject();
+  },
+
+    /**
+   * push the args into _czc, or _cache if the script is not loaded yet
+   */
+  _push (...args) {
+    this.debug(args);
+    if (window._hmt) {
+      window._hmt.push(...args);
+    } else {
+      this._cache.push(...args);
+    }
+  },
+  /**
+   * general method to create baidu analystics apis
+   */
+  _createMethod (method) {
+    return (...args) => {
+      this._push([`_${method}`, ...args]);
+    }
+  },
+
+  /**
+   * debug
+   */
+  debug () {},
+  /**
+   * the plugins is ready when the script is loaded
+   */
+  ready () {
+    return deferred.promise
+  },
+  /**
+     * patch up to create new api
+     */
+  patch (method) {
+    this[method] = this._createMethod(method);
+  }
+};
+
+// baidu apis
+methods.forEach((method) => (baidu[method] = baidu._createMethod(method)));
+
+/*
+ * FileName: log.js
+ * Project: wd-web-log
+ * Author: Gsan
+ * File Created: Tuesday, 17th March 2020 5:20:14 pm
+ * Last Modified: Tuesday, 17th March 2020 5:20:14 pm
+ * Modified By: Gsan
+ */
+const log = {};
+
+/**
+ * @description 返回这个样式的颜色值
+ * @param {String} type 样式名称 [ primary | success | warning | danger | text ]
+ */
+function typeColor (type = 'default') {
+  let color = '';
+  switch (type) {
+    case 'default': color = '#35495E'; break
+    case 'primary': color = '#3488ff'; break
+    case 'success': color = '#43B883'; break
+    case 'warning': color = '#e6a23c'; break
+    case 'danger': color = '#f56c6c'; break
+  }
+  return color
+}
+
+/**
+ * @description 打印一个 [ title | text ] 样式的信息
+ * @param {String} title title text
+ * @param {String} info info text
+ * @param {String} type style
+ */
+log.capsule = function (title, info, type = 'primary') {
+  console.log(
+    `%c ${title} %c ${info} %c`,
+    'background:#35495E; padding: 1px; border-radius: 3px 0 0 3px; color: #fff;',
+    `background:${typeColor(type)}; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff;`,
+    'background:transparent'
+  );
+};
+
+/**
+ * @description 打印彩色文字
+ */
+log.colorful = function (textArr) {
+  console.log(
+    `%c${textArr.map(t => t.text || '').join('%c')}`,
+    ...textArr.map(t => `color: ${typeColor(t.type)};`)
+  );
+};
+
+/**
+ * @description 打印 default 样式的文字
+ */
+log.default = function (text) {
+  log.colorful([{ text }]);
+};
+
+/**
+ * @description 打印 primary 样式的文字
+ */
+log.primary = function (text) {
+  log.colorful([{ text, type: 'primary' }]);
+};
+
+/**
+ * @description 打印 success 样式的文字
+ */
+log.success = function (text) {
+  log.colorful([{ text, type: 'success' }]);
+};
+
+/**
+ * @description 打印 warning 样式的文字
+ */
+log.warning = function (text) {
+  log.colorful([{ text, type: 'warning' }]);
+};
+
+/**
+ * @description 打印 danger 样式的文字
+ */
+log.danger = function (text) {
+  log.colorful([{ text, type: 'danger' }]);
+};
+
+/*
+ * FileName: baidu.js
+ * Project: wd-web-log
+ * Author: Gsan
+ * File Created: Tuesday, 17th March 2020 12:03:06 pm
+ * Last Modified: Tuesday, 17th March 2020 12:03:06 pm
+ * Modified By: Gsan
+ */
+
+const WebLogger$1 = async ({debug = false, config = {}}) => {
+  if (debug) {
+    console.log('init baidu', config);
+  }
+  const { src = 'https://hm.baidu.com/hm.js', siteId = '' } = config;
+  await dynamicLoadScript(`${src}?${siteId}`);
+  if (!window._hmt) {
+    log.danger('loading baidu statistics script failed, please check src and siteId');
+  }
+  return Object.assign({}, {
+    send (options = {}, data = '') {
+      if (!options) {
+        return
+      }
+      if (typeof options === 'string') {
+        options = { category: options, action: data };
+      }
+      const { type = 'trackEvent', category = '', action = '', opt_label = '', opt_value = '' } = options;
+      const arg = [];
+      if (category) arg.push(category);
+      if (action) arg.push(action);
+      if (opt_label) arg.push(opt_label);
+      if (opt_value) arg.push(opt_value);
+      if (!arg.length) {
+        console.warn('event undefinded');
+      }
+      const event = this[type];
+      if (!event) {
+        log.danger('type undefinded');
+      }
+      if (!window._hmt) {
+        log.danger('loading baidu statistics script failed');
+      } else {
+        event(arg);
+      }
+      if (debug) {
+        log.primary(`event_type=${type}, category=${category}, action=${action}, opt_label=${opt_label}, opt_value=${opt_value}`);
+      }
+    },
+  }, baidu)
+};
+
 /* eslint-disable */
 /*
  * FileName: defaultOptions.js
@@ -81,15 +352,17 @@ var defaultOptions = {
  * Modified By: Gsan
  */
 const logger = {
-  mta: WebLogger
+  mta: WebLogger,
+  baidu: WebLogger$1
 };
-const Logger = (logOptions = {}) => {
+
+const Logger = async (logOptions = {}) => {
   const options = Object.assign({}, defaultOptions, logOptions);
   Logger.options = options;
   if (!(options.type in logger)) {
     throw new Error('上报平台不存在或者尚未支持')
   }
-  Logger.reporter = logger[options.type](options);
+  Logger.reporter = await logger[options.type](options);
   if (options.autoClick) {
     document.addEventListener('click', function (event) {
       const targetElement = event.target;
@@ -190,5 +463,9 @@ var vue = {
 };
 
 Logger.Vue = vue;
+
+// export default async function (){
+//   return 'test'
+// }
 
 export default Logger;

@@ -19,13 +19,15 @@
     "url": "https://github.com/Gsangu/wd-web-log/issues"
   },
   "dependencies": {
-    "core-js": "^2.6.10",
+    "@babel/runtime-corejs3": "^7.8.7",
+    "core-js": "^3.6.4",
     "mta-h5-analysis": "^2.0.15"
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
-    "@babel/preset-env": "^7.6.3",
     "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/polyfill": "^7.8.7",
+    "@babel/preset-env": "^7.6.3",
     "eslint": "^6.5.1",
     "rollup": "^1.20.0",
     "rollup-plugin-babel": "^4.3.3",
