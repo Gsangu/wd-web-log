@@ -52,6 +52,9 @@ const install = (Vue, options) => {
   if (!Vue.prototype.$stat) {
     Object.defineProperty(Vue.prototype, '$stat', { value: Logger.send })
   }
+  if (!Vue.prototype.$wdLog) {
+    Object.defineProperty(Vue.prototype, '$wdLog', { value: Logger })
+  }
 }
 if (typeof window !== 'undefined' && window.Vue) {
   window.WdVueLog = { install }

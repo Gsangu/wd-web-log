@@ -14,13 +14,16 @@ const WebLogger = async ({debug = false, config = {}}) => {
   if (debug) {
     console.log('init uweb', config)
   }
-  const { src = 'http://s11.cnzz.com/z_stat.php', siteId = '' } = config
+  let { src = 'http://s11.cnzz.com/z_stat.php', siteId = '', autoPageview } = config
   await dynamicLoadScript(`${src}?id=${siteId}&web_id=${siteId}`)
   if (!window._czc) {
     log.danger('loading uweb statistics script failed, please check src and siteId')
   }
+  if (autoPageview !== false) {
+    autoPageview = true
+  }
   uweb.setAccount(siteId)
-  uweb.setAutoPageview(config.autoPageview)
+  uweb.setAutoPageview(autoPageview)
   return Object.assign({}, {
     send (options = {}, data = '') {
       if (!options) {
