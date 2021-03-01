@@ -16,15 +16,17 @@ export default {
   // 是否开启自动上报 若关闭自行请在在事件中手动上报
   autoSend: true,
   // 是否开启异常上报
-  autoError: true,
+  autoError: false,
+  // 异常上报
+  autoErrorSend: false,
   // 开启debug
   debug: false,
-  // 上报平台 目前支持 mta
+  // 上报平台 目前支持 mta,baidu,uweb
   type: 'mta',
   // 上报平台配置
   config: {},
   // 发送事件
   onSend: (sendEvent, sendData, reporter, event) => {},
   // 错误捕捉
-  onError: (error) => {}
+  onError: (error) => {},
 }

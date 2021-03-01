@@ -8,17 +8,20 @@
  */
 import mta from './mta'
 import baidu from './baidu'
+import person from './person'
 import defaultOptions from '../defaultOptions'
 const logger = {
   mta,
   baidu,
+  person,
 }
 
 function getReporter(options) {
   try {
     return logger[options.type](options)
   } catch (error) {
-    throw new Error('实例不存在')
+    console.log('实例不存在，请配置onSend，自行实现上报')
+    return logger.person(options)
   }
 }
 
@@ -28,7 +31,7 @@ const Logger = async function (logOptions = {}) {
   if (!(options.type in logger)) {
     throw new Error('上报平台不存在或者尚未支持')
   }
-  Logger.reporter = await getReporter(options)
+  Logger.reporter || (Logger.reporter = await getReporter(options))
   if (options.autoClick) {
     document.addEventListener('click', function (event) {
       const targetElement = event.target
@@ -47,7 +50,7 @@ const Logger = async function (logOptions = {}) {
         colno,
         error,
       }
-      Logger.send('error', errorData)
+      options.autoErrorSend && Logger.send('error', errorData)
       Logger.options.onError && Logger.options.onError(errorData, Logger)
     }
   }

@@ -312,6 +312,20 @@ const WebLogger$1 = async ({debug = false, config = {}}) => {
   }, baidu)
 };
 
+/*
+ * FileName: person.js
+ * Project: wd-web-log
+ * Author: Gsan
+ * File Created: Monday, 1st March 2021 4:45:10 pm
+ * Last Modified: Monday, 1st March 2021 4:45:11 pm
+ * Modified By: Gsan
+ */
+var person = {
+  send() {
+    return
+  },
+};
+
 /* eslint-disable */
 /*
  * FileName: defaultOptions.js
@@ -330,17 +344,19 @@ var defaultOptions = {
   // 是否开启自动上报 若关闭自行请在在事件中手动上报
   autoSend: true,
   // 是否开启异常上报
-  autoError: true,
+  autoError: false,
+  // 异常上报
+  autoErrorSend: false,
   // 开启debug
   debug: false,
-  // 上报平台 目前支持 mta
+  // 上报平台 目前支持 mta,baidu,uweb
   type: 'mta',
   // 上报平台配置
   config: {},
   // 发送事件
   onSend: (sendEvent, sendData, reporter, event) => {},
   // 错误捕捉
-  onError: (error) => {}
+  onError: (error) => {},
 };
 
 /*
@@ -354,13 +370,15 @@ var defaultOptions = {
 const logger = {
   mta: WebLogger,
   baidu: WebLogger$1,
+  person,
 };
 
 function getReporter(options) {
   try {
     return logger[options.type](options)
   } catch (error) {
-    throw new Error('实例不存在')
+    console.log('实例不存在，请配置onSend，自行实现上报');
+    return logger.person(options)
   }
 }
 
@@ -370,7 +388,7 @@ const Logger = async function (logOptions = {}) {
   if (!(options.type in logger)) {
     throw new Error('上报平台不存在或者尚未支持')
   }
-  Logger.reporter = await getReporter(options);
+  Logger.reporter || (Logger.reporter = await getReporter(options));
   if (options.autoClick) {
     document.addEventListener('click', function (event) {
       const targetElement = event.target;
@@ -389,7 +407,7 @@ const Logger = async function (logOptions = {}) {
         colno,
         error,
       };
-      Logger.send('error', errorData);
+      options.autoErrorSend && Logger.send('error', errorData);
       Logger.options.onError && Logger.options.onError(errorData, Logger);
     };
   }
