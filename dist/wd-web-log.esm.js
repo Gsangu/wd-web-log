@@ -353,16 +353,24 @@ var defaultOptions = {
  */
 const logger = {
   mta: WebLogger,
-  baidu: WebLogger$1
+  baidu: WebLogger$1,
 };
 
-const Logger = async (logOptions = {}) => {
+function getReporter(options) {
+  try {
+    return logger[options.type](options)
+  } catch (error) {
+    throw new Error('实例不存在')
+  }
+}
+
+const Logger = async function (logOptions = {}) {
   const options = Object.assign({}, defaultOptions, logOptions);
   Logger.options = options;
   if (!(options.type in logger)) {
     throw new Error('上报平台不存在或者尚未支持')
   }
-  Logger.reporter = await logger[options.type](options);
+  Logger.reporter = await getReporter(options);
   if (options.autoClick) {
     document.addEventListener('click', function (event) {
       const targetElement = event.target;
@@ -373,13 +381,13 @@ const Logger = async (logOptions = {}) => {
     });
   }
   if (options.autoError) {
-    window.onerror = function(event, source, lineno, colno, error) {
+    window.onerror = function (event, source, lineno, colno, error) {
       const errorData = {
         event,
         source,
         lineno,
         colno,
-        error
+        error,
       };
       Logger.send('error', errorData);
       Logger.options.onError && Logger.options.onError(errorData, Logger);
@@ -388,12 +396,9 @@ const Logger = async (logOptions = {}) => {
   return Logger
 };
 
-Logger.send = (value, data , event) => {
+Logger.send = async function (value, data, event) {
   const options = Logger.options;
-  const reporter = Logger.reporter;
-  if (!reporter || !options) {
-    throw new Error('实例不存在')
-  }
+  const reporter = Logger.reporter || (await getReporter(options));
   if (options.autoSend) {
     reporter.send(value, data);
   }
@@ -413,7 +418,7 @@ const install = (Vue, options) => {
   // 注册一个全局自定义指令 `v-log`
   Vue.directive('log', {
     // 当被绑定的元素插入到 DOM 中时
-    inserted (el, binding) {
+    inserted(el, binding) {
       // 获取值
       const { value } = binding;
       // 添加事件监听
@@ -423,12 +428,12 @@ const install = (Vue, options) => {
       el.addEventListener('click', function (event) {
         Logger.send(value, '', event);
       });
-    }
+    },
   });
   // v-stat
   Vue.directive('stat', {
     // 当被绑定的元素插入到 DOM 中时
-    inserted (el, binding) {
+    inserted(el, binding) {
       // 获取值
       const { value } = binding;
       // 添加事件监听
@@ -436,16 +441,16 @@ const install = (Vue, options) => {
         throw new Error('Like v-stat="\'view\'"')
       }
       Logger.send(value, '');
-    }
+    },
   });
   if (Logger.options.autoError) {
     Vue.config.errorHandler = function (err, vm, info) {
       const errorData = {
         err,
         vm,
-        info
+        info,
       };
-        // 上报异常
+      // 上报异常
       Logger.send('error', errorData);
       Logger.options.onError && Logger.options.onError(errorData, Logger);
     };
@@ -453,13 +458,16 @@ const install = (Vue, options) => {
   if (!Vue.prototype.$stat) {
     Object.defineProperty(Vue.prototype, '$stat', { value: Logger.send });
   }
+  if (!Vue.prototype.$wdLog) {
+    Object.defineProperty(Vue.prototype, '$wdLog', { value: Logger });
+  }
 };
 if (typeof window !== 'undefined' && window.Vue) {
   window.WdVueLog = { install };
   // install(window.Vue);
 }
 var vue = {
-  install
+  install,
 };
 
 Logger.Vue = vue;
