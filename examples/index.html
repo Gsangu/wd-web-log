@@ -1,63 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>web-log</title>
-  <script src="https://cdn.jsdelivr.net/npm/wd-web-log/dist/wd-web-log.js"></script>
-<!--   <script src="../dist/wd-web-log.js"></script> -->
-</head>
-<body>
-  <a href="vue.html">vue</a>
-  <div id="app">
-    <div class="container">
-      <button id="test">
-        test
-      </button>
-      <button id="error">
-        error
-      </button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>web-log</title>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/wd-web-log/dist/wd-web-log.js"></script> -->
+    <script src="../dist/wd-web-log.js"></script>
+  </head>
+  <body>
+    <a href="vue.html">vue</a>
+    <div id="app">
+      <div class="container">
+        <button id="test">test</button>
+        <button id="error">error</button>
+      </div>
     </div>
-  </div>
-  <script>
-    var logger = null
-    WdWebLog({
-      debug: true,
-      // autoSend: true,
-      autoSend: false,
-      // 是否开启异常上报
-      autoError: true,
-      // 开启debug
-      debug: true,
-      // 上报平台 目前 mta,baidu,uweb
-      type: 'baidu',
-      // 上报平台配置
-      config: {
-        // src: '',
-        siteId: ''
-      },
-      // 发送事件
-      onSend: (sendEvent, sendData, reporter, event) => {
-        console.log(sendEvent)
-        // reporter.send(sendEvent, sendData)
-        reporter.send('sendEvent' + sendEvent)
-      },
-      // 错误捕捉
-      onError: (error) => {
-        console.log('异常捕捉:', error)
-      }
-    }).then(function (log) {
-      logger = log
-    // 调用mta原生方法
-      // logger.reporter.pgv();
-    });
-    document.querySelector('#test').addEventListener('click', function (e) {
-      logger.send('test')
-    })
-    document.querySelector('#error').addEventListener('click', function (e) {
-      throw new Error('test error')
-    })
-  </script>
-</body>
+    <script>
+      var logger = null
+      WdWebLog({
+        debug: true,
+        // autoSend: true,
+        autoSend: false,
+        // 是否开启异常上报
+        autoError: true,
+        // 开启debug
+        debug: true,
+        // 上报平台 目前 mta,baidu,uweb
+        type: 'uweb',
+        // 上报平台配置
+        config: {
+          src: 'hm.js',
+          siteId: '',
+        },
+        // 发送事件
+        onSend: (sendEvent, sendData, reporter, event) => {
+          console.log(sendEvent)
+          // reporter.send(sendEvent, sendData)
+          reporter.send('sendEvent' + sendEvent)
+        },
+        // 错误捕捉
+        onError: (error) => {
+          console.log('异常捕捉:', error)
+        },
+      }).then(function (log) {
+        logger = log
+        console.log(logger.reporter)
+        // 调用mta原生方法
+        // logger.reporter.pgv();
+      })
+      document.querySelector('#test').addEventListener('click', function (e) {
+        logger.send('test')
+      })
+      document.querySelector('#error').addEventListener('click', function (e) {
+        throw new Error('test error')
+      })
+    </script>
+  </body>
 </html>

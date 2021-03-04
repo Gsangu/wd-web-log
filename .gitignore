@@ -68,3 +68,5 @@ typings/
 .vscode
 
 .DS_Store
+
+hm.js

@@ -46,7 +46,7 @@ let callbacks = [];
 const dynamicLoadScript = (src, isLoad) => {
   return new Promise((resolve, reject) => {
     const existingScript = document.getElementById(src);
-    const cb = function() {
+    const cb = function () {
       resolve();
     };
 
@@ -61,7 +61,7 @@ const dynamicLoadScript = (src, isLoad) => {
     }
 
     if (existingScript && cb) {
-      if (isLoad()) {
+      if (isLoad && isLoad()) {
         cb();
       } else {
         callbacks.push(cb);
@@ -69,7 +69,7 @@ const dynamicLoadScript = (src, isLoad) => {
     }
 
     function stdOnEnd(script) {
-      script.onload = function() {
+      script.onload = function () {
         // this.onload = null here is necessary
         // because even IE9 works not like others
         this.onerror = this.onload = null;
@@ -78,16 +78,15 @@ const dynamicLoadScript = (src, isLoad) => {
         }
         callbacks = null;
       };
-      script.onerror = function() {
+      script.onerror = function () {
         this.onerror = this.onload = null;
         reject(new Error('Failed to load ' + src), script);
       };
     }
 
     function ieOnEnd(script) {
-      script.onreadystatechange = function() {
-        if (this.readyState !== 'complete' && this.readyState !== 'loaded')
-          return
+      script.onreadystatechange = function () {
+        if (this.readyState !== 'complete' && this.readyState !== 'loaded') return
         this.onreadystatechange = null;
         for (const cb of callbacks) {
           cb(null, script); // there is no way to catch loading errors in IE8
@@ -270,7 +269,7 @@ log.danger = function (text) {
  * Modified By: Gsan
  */
 
-const WebLogger$1 = async ({debug = false, config = {}}) => {
+const WebLogger$1 = async ({ debug = false, config = {} }) => {
   if (debug) {
     console.log('init baidu', config);
   }
@@ -279,37 +278,41 @@ const WebLogger$1 = async ({debug = false, config = {}}) => {
   if (!window._hmt) {
     log.danger('loading baidu statistics script failed, please check src and siteId');
   }
-  return Object.assign({}, {
-    send (options = {}, data = '') {
-      if (!options) {
-        return
-      }
-      if (typeof options === 'string') {
-        options = { category: options, action: data };
-      }
-      const { type = 'trackEvent', category = '', action = '', opt_label = '', opt_value = '' } = options;
-      const arg = [];
-      if (category) arg.push(category);
-      if (action) arg.push(action);
-      if (opt_label) arg.push(opt_label);
-      if (opt_value) arg.push(opt_value);
-      if (!arg.length) {
-        console.warn('event undefinded');
-      }
-      const event = this[type];
-      if (!event) {
-        log.danger('type undefinded');
-      }
-      if (!window._hmt) {
-        log.danger('loading baidu statistics script failed');
-      } else {
-        event(arg);
-      }
-      if (debug) {
-        log.primary(`event_type=${type}, category=${category}, action=${action}, opt_label=${opt_label}, opt_value=${opt_value}`);
-      }
+  return Object.assign(
+    {},
+    {
+      send(options = {}, data = '') {
+        if (!options) {
+          return
+        }
+        if (typeof options === 'string') {
+          options = { category: options, action: data };
+        }
+        const { type = 'trackEvent', category = '', action = '', opt_label = '', opt_value = '' } = options;
+        const arg = [];
+        if (category) arg.push(category);
+        if (action) arg.push(action);
+        if (opt_label) arg.push(opt_label);
+        if (opt_value) arg.push(opt_value);
+        if (!arg.length) {
+          console.warn('event undefinded');
+        }
+        const event = this[type];
+        if (!event) {
+          log.danger('type undefinded');
+        }
+        if (!window._hmt) {
+          log.danger('loading baidu statistics script failed');
+        } else {
+          event(arg);
+        }
+        if (debug) {
+          log.primary(`event_type=${type}, category=${category}, action=${action}, opt_label=${opt_label}, opt_value=${opt_value}`);
+        }
+      },
     },
-  }, baidu)
+    baidu
+  )
 };
 
 /*
@@ -320,10 +323,157 @@ const WebLogger$1 = async ({debug = false, config = {}}) => {
  * Last Modified: Monday, 1st March 2021 4:45:11 pm
  * Modified By: Gsan
  */
-var person = {
-  send() {
-    return
+const WebLogger$2 = async ({ debug = false, config = {} }) => {
+  if (debug) {
+    console.log('init person', config);
+  }
+  return {
+    send() {
+      return
+    },
+  }
+};
+
+/*
+ * FileName: uwebSDK.js
+ * Project: wd-web-log
+ * Author: Gsan
+ * File Created: Tuesday, 17th March 2020 2:48:38 pm
+ * Last Modified: Tuesday, 17th March 2020 2:48:38 pm
+ * Modified By: Gsan
+ */
+const deferred$1 = {};
+deferred$1.promise = new Promise((resolve, reject) => {
+  deferred$1.resolve = resolve;
+  deferred$1.reject = reject;
+});
+const methods$1 = [
+  'trackPageview', // 用于发送某个URL的PV统计请求，适用于统计AJAX、异步加载页面，友情链接，下载链接的流量 doc: http://open.cnzz.com/a/api/trackpageview/
+  'trackEvent', // 用于发送页面上按钮等交互元素被触发时的事件统计请求。doc: http://open.cnzz.com/a/api/trackevent/
+  'setCustomVar', // 用于发送为访客打自定义标记的请求，用来统计会员访客、登录访客、不同来源访客的浏览数据。 http://open.cnzz.com/a/api/setcustomvar/
+  'setAccount', // 当您的页面上添加了多个CNZZ统计代码时，需要用到本方法绑定需要哪个siteid对应的统计代码来接受API发送的请求。未绑定的siteid将忽略相关请求。 http://open.cnzz.com/a/api/setaccount/
+  'setAutoPageview', // 如果您使用trackPageview改写了已有页面的URL，那么建议您在CNZZ的JS统计代码执行前先调用setAutoPageview，将该页面的自动PV统计关闭，防止页面的流量被统计双倍。 http://open.cnzz.com/a/api/setautopageview/
+  'deleteCustomVar', // 发送删除自定义访客标签的请求。将访客身上已被标记的自定义访客类型去掉，去掉后不再继续统计。 http://open.cnzz.com/a/api/deletecustomvar/
+];
+
+const uweb = {
+  /**
+   * internal user only
+   */
+  _cache: [],
+  /**
+   * internal user only, resolve the promise
+   */
+  _resolve() {
+    deferred$1.resolve();
   },
+  /**
+   * internal user only, reject the promise
+   */
+  _reject() {
+    deferred$1.reject();
+  },
+
+  /**
+   * push the args into _czc, or _cache if the script is not loaded yet
+   */
+  _push(...args) {
+    this.debug(args);
+    if (window._czc) {
+      window._czc.push(...args);
+    } else {
+      this._cache.push(...args);
+    }
+  },
+  /**
+   * general method to create baidu analystics apis
+   */
+  _createMethod(method) {
+    return (...args) => {
+      this._push([`_${method}`, ...args]);
+    }
+  },
+
+  /**
+   * debug
+   */
+  debug() {},
+  /**
+   * the plugins is ready when the script is loaded
+   */
+  ready() {
+    return deferred$1.promise
+  },
+  /**
+   * patch up to create new api
+   */
+  patch(method) {
+    this[method] = this._createMethod(method);
+  },
+};
+
+// uweb apis
+methods$1.forEach((method) => (uweb[method] = uweb._createMethod(method)));
+
+/*
+ * FileName: uweb.js
+ * Project: wd-web-log
+ * Author: Gsan
+ * File Created: Tuesday, 17th March 2020 2:48:38 pm
+ * Last Modified: Tuesday, 17th March 2020 2:48:38 pm
+ * Modified By: Gsan
+ */
+
+const WebLogger$3 = async ({ debug = false, config = {} }) => {
+  if (debug) {
+    console.log('init uweb', config);
+  }
+  let { src = 'http://s11.cnzz.com/z_stat.php', siteId = '', autoPageview } = config;
+  await dynamicLoadScript(`${src}?id=${siteId}&web_id=${siteId}`);
+  if (!window._czc) {
+    log.danger('loading uweb statistics script failed, please check src and siteId');
+  }
+  if (autoPageview !== false) {
+    autoPageview = true;
+  }
+  uweb.setAccount(siteId);
+  uweb.setAutoPageview(autoPageview);
+  return Object.assign(
+    {},
+    {
+      send(options = {}, data = '') {
+        if (!options) {
+          return
+        }
+        if (typeof options === 'string') {
+          options = { category: options, action: data };
+        }
+        const { type = 'trackEvent', category = '', action = '', label = '', value = '', nodeid = '' } = options;
+        const arg = [];
+        if (category) arg.push(category);
+        if (action) arg.push(action);
+        if (label) arg.push(label);
+        if (value) arg.push(value);
+        if (nodeid) arg.push(nodeid);
+        if (!arg.length) {
+          console.warn('event undefinded');
+        }
+        const event = this[type];
+        if (!event) {
+          log.danger('type undefinded');
+        }
+        if (!window._czc) {
+          log.danger('loading uweb statistics script failed');
+        } else {
+          event(arg);
+        }
+        if (debug) {
+          log.primary(`event_type=${type}, category=${category}, action=${action}, label=${label}, value=${value}, nodeid=${nodeid}`);
+        }
+      },
+    },
+    uweb
+  )
 };
 
 /* eslint-disable */
@@ -370,7 +520,8 @@ var defaultOptions = {
 const logger = {
   mta: WebLogger,
   baidu: WebLogger$1,
-  person,
+  uweb: WebLogger$3,
+  person: WebLogger$2,
 };
 
 function getReporter(options) {
@@ -385,10 +536,8 @@ function getReporter(options) {
 const Logger = async function (logOptions = {}) {
   const options = Object.assign({}, defaultOptions, logOptions);
   Logger.options = options;
-  if (!(options.type in logger)) {
-    throw new Error('上报平台不存在或者尚未支持')
-  }
-  Logger.reporter || (Logger.reporter = await getReporter(options));
+  options.beforeInit && options.beforeInit(options.config);
+  Logger.reporter = Logger.reporter || (await getReporter(options));
   if (options.autoClick) {
     document.addEventListener('click', function (event) {
       const targetElement = event.target;

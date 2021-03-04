@@ -8,7 +8,10 @@
  */
 const handler = require('serve-handler')
 const http = require('http')
-const examplesPath = './examples'
+const examplesPath = './'
+
+const args = require('minimist')(process.argv.slice(2))
+const port = args.port || 5500
 const server = http.createServer((request, response) => {
   // You pass two more arguments for config and middleware Access-Control-Allow-Origin
   // More details here: https://github.com/vercel/serve-handler#options
@@ -21,6 +24,8 @@ const server = http.createServer((request, response) => {
   })
 })
 
-server.listen(5500, () => {
-  console.log('Running at http://localhost:5500')
+server.listen(port, () => {
+  console.log(`Running at http://localhost:${port}`)
+  // require('child_process').exec(`start http://localhost:${port}`)
+  require('open')(`http://localhost:${port}/examples`)
 })

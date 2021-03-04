@@ -10,7 +10,7 @@ import dynamicLoadScript from '../utils/dynamicLoadScript'
 import log from '../utils/log'
 import uweb from '../utils/uwebSDK'
 
-const WebLogger = async ({debug = false, config = {}}) => {
+const WebLogger = async ({ debug = false, config = {} }) => {
   if (debug) {
     console.log('init uweb', config)
   }
@@ -24,37 +24,42 @@ const WebLogger = async ({debug = false, config = {}}) => {
   }
   uweb.setAccount(siteId)
   uweb.setAutoPageview(autoPageview)
-  return Object.assign({}, {
-    send (options = {}, data = '') {
-      if (!options) {
-        return
-      }
-      if (typeof options === 'string') {
-        options = { category: options, action: data }
-      }
-      const { type = 'trackEvent', category = '', action = '', opt_label = '', opt_value = '' } = options
-      const arg = []
-      if (category) arg.push(category)
-      if (action) arg.push(action)
-      if (opt_label) arg.push(opt_label)
-      if (opt_value) arg.push(opt_value)
-      if (!arg.length) {
-        console.warn('event undefinded')
-      }
-      const event = this[type]
-      if (!event) {
-        log.danger('type undefinded')
-      }
-      if (!window._hmt) {
-        log.danger('loading baidu statistics script failed')
-      } else {
-        event(arg)
-      }
-      if (debug) {
-        log.primary(`event_type=${type}, category=${category}, action=${action}, opt_label=${opt_label}, opt_value=${opt_value}`)
-      }
+  return Object.assign(
+    {},
+    {
+      send(options = {}, data = '') {
+        if (!options) {
+          return
+        }
+        if (typeof options === 'string') {
+          options = { category: options, action: data }
+        }
+        const { type = 'trackEvent', category = '', action = '', label = '', value = '', nodeid = '' } = options
+        const arg = []
+        if (category) arg.push(category)
+        if (action) arg.push(action)
+        if (label) arg.push(label)
+        if (value) arg.push(value)
+        if (nodeid) arg.push(nodeid)
+        if (!arg.length) {
+          console.warn('event undefinded')
+        }
+        const event = this[type]
+        if (!event) {
+          log.danger('type undefinded')
+        }
+        if (!window._czc) {
+          log.danger('loading uweb statistics script failed')
+        } else {
+          event(arg)
+        }
+        if (debug) {
+          log.primary(`event_type=${type}, category=${category}, action=${action}, label=${label}, value=${value}, nodeid=${nodeid}`)
+        }
+      },
     },
-  }, uweb)
+    uweb
+  )
 }
 
 export default WebLogger

@@ -3,7 +3,7 @@ let callbacks = []
 const dynamicLoadScript = (src, isLoad) => {
   return new Promise((resolve, reject) => {
     const existingScript = document.getElementById(src)
-    const cb = function() {
+    const cb = function () {
       resolve()
     }
 
@@ -18,7 +18,7 @@ const dynamicLoadScript = (src, isLoad) => {
     }
 
     if (existingScript && cb) {
-      if (isLoad()) {
+      if (isLoad && isLoad()) {
         cb(null, existingScript)
       } else {
         callbacks.push(cb)
@@ -26,7 +26,7 @@ const dynamicLoadScript = (src, isLoad) => {
     }
 
     function stdOnEnd(script) {
-      script.onload = function() {
+      script.onload = function () {
         // this.onload = null here is necessary
         // because even IE9 works not like others
         this.onerror = this.onload = null
@@ -35,16 +35,15 @@ const dynamicLoadScript = (src, isLoad) => {
         }
         callbacks = null
       }
-      script.onerror = function() {
+      script.onerror = function () {
         this.onerror = this.onload = null
         reject(new Error('Failed to load ' + src), script)
       }
     }
 
     function ieOnEnd(script) {
-      script.onreadystatechange = function() {
-        if (this.readyState !== 'complete' && this.readyState !== 'loaded')
-          return
+      script.onreadystatechange = function () {
+        if (this.readyState !== 'complete' && this.readyState !== 'loaded') return
         this.onreadystatechange = null
         for (const cb of callbacks) {
           cb(null, script) // there is no way to catch loading errors in IE8

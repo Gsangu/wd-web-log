@@ -9,10 +9,12 @@
 import mta from './mta'
 import baidu from './baidu'
 import person from './person'
+import uweb from './uweb'
 import defaultOptions from '../defaultOptions'
 const logger = {
   mta,
   baidu,
+  uweb,
   person,
 }
 
@@ -28,10 +30,8 @@ function getReporter(options) {
 const Logger = async function (logOptions = {}) {
   const options = Object.assign({}, defaultOptions, logOptions)
   Logger.options = options
-  if (!(options.type in logger)) {
-    throw new Error('上报平台不存在或者尚未支持')
-  }
-  Logger.reporter || (Logger.reporter = await getReporter(options))
+  options.beforeInit && options.beforeInit(options.config)
+  Logger.reporter = Logger.reporter || (await getReporter(options))
   if (options.autoClick) {
     document.addEventListener('click', function (event) {
       const targetElement = event.target
