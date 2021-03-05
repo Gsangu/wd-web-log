@@ -112,31 +112,31 @@ deferred.promise = new Promise((resolve, reject) => {
 });
 const methods = [
   'trackPageview', // 用于发送某个URL的PV统计请求，适用于统计AJAX、异步加载页面，友情链接，下载链接的流量 https://tongji.baidu.com/web/help/article?id=236&type=0
-  'trackEvent' // 用于发送页面上按钮等交互元素被触发时的事件统计请求。https://tongji.baidu.com/web/help/article?id=236&type=0
+  'trackEvent', // 用于发送页面上按钮等交互元素被触发时的事件统计请求。https://tongji.baidu.com/web/help/article?id=236&type=0
 ];
 
 const baidu = {
   /**
-  * internal user only
-  */
+   * internal user only
+   */
   _cache: [],
   /**
    * internal user only, resolve the promise
    */
-  _resolve () {
+  _resolve() {
     deferred.resolve();
   },
   /**
-     * internal user only, reject the promise
-     */
-  _reject () {
+   * internal user only, reject the promise
+   */
+  _reject() {
     deferred.reject();
   },
 
-    /**
+  /**
    * push the args into _czc, or _cache if the script is not loaded yet
    */
-  _push (...args) {
+  _push(...args) {
     this.debug(args);
     if (window._hmt) {
       window._hmt.push(...args);
@@ -147,7 +147,7 @@ const baidu = {
   /**
    * general method to create baidu analystics apis
    */
-  _createMethod (method) {
+  _createMethod(method) {
     return (...args) => {
       this._push([`_${method}`, ...args]);
     }
@@ -156,19 +156,19 @@ const baidu = {
   /**
    * debug
    */
-  debug () {},
+  debug() {},
   /**
    * the plugins is ready when the script is loaded
    */
-  ready () {
+  ready() {
     return deferred.promise
   },
   /**
-     * patch up to create new api
-     */
-  patch (method) {
+   * patch up to create new api
+   */
+  patch(method) {
     this[method] = this._createMethod(method);
-  }
+  },
 };
 
 // baidu apis
@@ -286,7 +286,10 @@ const WebLogger$1 = async ({ debug = false, config = {} }) => {
           return
         }
         if (typeof options === 'string') {
-          options = { category: options, action: data };
+          options = { category: options, action: data || options };
+        }
+        if (!options.category || !options.action) {
+          console.warn('category and action is required');
         }
         const { type = 'trackEvent', category = '', action = '', opt_label = '', opt_value = '' } = options;
         const arg = [];
@@ -300,11 +303,12 @@ const WebLogger$1 = async ({ debug = false, config = {} }) => {
         const event = this[type];
         if (!event) {
           log.danger('type undefinded');
+          return
         }
         if (!window._hmt) {
           log.danger('loading baidu statistics script failed');
         } else {
-          event(arg);
+          event(...arg);
         }
         if (debug) {
           log.primary(`event_type=${type}, category=${category}, action=${action}, opt_label=${opt_label}, opt_value=${opt_value}`);
@@ -423,7 +427,6 @@ methods$1.forEach((method) => (uweb[method] = uweb._createMethod(method)));
  * Last Modified: Tuesday, 17th March 2020 2:48:38 pm
  * Modified By: Gsan
  */
-
 const WebLogger$3 = async ({ debug = false, config = {} }) => {
   if (debug) {
     console.log('init uweb', config);
@@ -446,7 +449,10 @@ const WebLogger$3 = async ({ debug = false, config = {} }) => {
           return
         }
         if (typeof options === 'string') {
-          options = { category: options, action: data };
+          options = { category: options, action: data || options };
+        }
+        if (!options.category || !options.action) {
+          console.warn('category and action is required');
         }
         const { type = 'trackEvent', category = '', action = '', label = '', value = '', nodeid = '' } = options;
         const arg = [];
@@ -461,11 +467,12 @@ const WebLogger$3 = async ({ debug = false, config = {} }) => {
         const event = this[type];
         if (!event) {
           log.danger('type undefinded');
+          return
         }
         if (!window._czc) {
           log.danger('loading uweb statistics script failed');
         } else {
-          event(arg);
+          event(...arg);
         }
         if (debug) {
           log.primary(`event_type=${type}, category=${category}, action=${action}, label=${label}, value=${value}, nodeid=${nodeid}`);

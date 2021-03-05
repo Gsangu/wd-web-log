@@ -28,14 +28,16 @@
         debug: true,
         // 上报平台 目前 mta,baidu,uweb
         type: 'uweb',
+        // type: 'baidu',
         // 上报平台配置
         config: {
-          src: 'hm.js',
+          // src: 'hm.js',
+          // src: 'z_stat.js',
           siteId: '',
         },
         // 发送事件
         onSend: (sendEvent, sendData, reporter, event) => {
-          console.log(sendEvent)
+          console.log('event name:', sendEvent)
           // reporter.send(sendEvent, sendData)
           reporter.send('sendEvent' + sendEvent)
         },

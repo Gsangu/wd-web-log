@@ -69,4 +69,6 @@ typings/
 
 .DS_Store
 
+# test file
 hm.js
+z_stat.js

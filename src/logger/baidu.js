@@ -27,7 +27,10 @@ const WebLogger = async ({ debug = false, config = {} }) => {
           return
         }
         if (typeof options === 'string') {
-          options = { category: options, action: data }
+          options = { category: options, action: data || options }
+        }
+        if (!options.category || !options.action) {
+          console.warn('category and action is required')
         }
         const { type = 'trackEvent', category = '', action = '', opt_label = '', opt_value = '' } = options
         const arg = []
@@ -41,11 +44,12 @@ const WebLogger = async ({ debug = false, config = {} }) => {
         const event = this[type]
         if (!event) {
           log.danger('type undefinded')
+          return
         }
         if (!window._hmt) {
           log.danger('loading baidu statistics script failed')
         } else {
-          event(arg)
+          event(...arg)
         }
         if (debug) {
           log.primary(`event_type=${type}, category=${category}, action=${action}, opt_label=${opt_label}, opt_value=${opt_value}`)

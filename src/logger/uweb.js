@@ -9,7 +9,6 @@
 import dynamicLoadScript from '../utils/dynamicLoadScript'
 import log from '../utils/log'
 import uweb from '../utils/uwebSDK'
-
 const WebLogger = async ({ debug = false, config = {} }) => {
   if (debug) {
     console.log('init uweb', config)
@@ -32,7 +31,10 @@ const WebLogger = async ({ debug = false, config = {} }) => {
           return
         }
         if (typeof options === 'string') {
-          options = { category: options, action: data }
+          options = { category: options, action: data || options }
+        }
+        if (!options.category || !options.action) {
+          console.warn('category and action is required')
         }
         const { type = 'trackEvent', category = '', action = '', label = '', value = '', nodeid = '' } = options
         const arg = []
@@ -47,11 +49,12 @@ const WebLogger = async ({ debug = false, config = {} }) => {
         const event = this[type]
         if (!event) {
           log.danger('type undefinded')
+          return
         }
         if (!window._czc) {
           log.danger('loading uweb statistics script failed')
         } else {
-          event(arg)
+          event(...arg)
         }
         if (debug) {
           log.primary(`event_type=${type}, category=${category}, action=${action}, label=${label}, value=${value}, nodeid=${nodeid}`)
