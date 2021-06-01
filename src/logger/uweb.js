@@ -13,7 +13,7 @@ const WebLogger = async ({ debug = false, config = {} }) => {
   if (debug) {
     console.log('init uweb', config)
   }
-  let { src = 'http://s11.cnzz.com/z_stat.php', siteId = '', autoPageview } = config
+  let { src = 'https://s11.cnzz.com/z_stat.php', siteId = '', autoPageview } = config
   await dynamicLoadScript(`${src}?id=${siteId}&web_id=${siteId}`)
   if (!window._czc) {
     log.danger('loading uweb statistics script failed, please check src and siteId')
