@@ -49,6 +49,28 @@ const install = (Vue, options) => {
       Logger.options.onError && Logger.options.onError(errorData, Logger)
     }
   }
+  Vue.mixin({
+    data: () => ({
+      PAGE_ENTER_TIME: Date.now(),
+    }),
+    created() {
+    },
+    beforeRouteUpdate(to, from, next) {
+      // 确保导航升级完成
+      this.$watch('$route', () => {
+        Logger.options.onPageview && Logger.options.onPageview(Logger)
+      })
+      next()
+    },
+    // 页面停留时间
+    beforeRouteLeave(to, from, next) {
+      Logger.options.onTonp && Logger.options.onTonp(Logger, {
+        et: this.PAGE_ENTER_TIME,
+        dt: Date.now()
+      })
+      next()
+    }
+  })
   if (!Vue.prototype.$stat) {
     Object.defineProperty(Vue.prototype, '$stat', { value: Logger.send })
   }

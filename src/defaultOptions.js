@@ -27,6 +27,10 @@ export default {
   config: {},
   // 发送事件
   onSend: (sendEvent, sendData, reporter, event) => {},
+  // 页面跳转上报
+  onPageview: (ctx) => {},
+  // 页面停留时长统计
+  onTonp: (ctx, time) => {},
   // 错误捕捉
   onError: (error) => {},
 }

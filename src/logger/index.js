@@ -54,6 +54,12 @@ const Logger = async function (logOptions = {}) {
       Logger.options.onError && Logger.options.onError(errorData, Logger)
     }
   }
+  const et = Date.now()
+  options.onPageview &&  options.onPageview(this)
+  window.onbeforeunload = () => Logger.options.onTonp && Logger.options.onTonp(Logger, {
+    et,
+    dt: Date.now(),
+  })
   return Logger
 }
 

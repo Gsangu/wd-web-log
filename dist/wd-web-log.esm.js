@@ -431,7 +431,7 @@ const WebLogger$3 = async ({ debug = false, config = {} }) => {
   if (debug) {
     console.log('init uweb', config);
   }
-  let { src = 'http://s11.cnzz.com/z_stat.php', siteId = '', autoPageview } = config;
+  let { src = 'https://s11.cnzz.com/z_stat.php', siteId = '', autoPageview } = config;
   await dynamicLoadScript(`${src}?id=${siteId}&web_id=${siteId}`);
   if (!window._czc) {
     log.danger('loading uweb statistics script failed, please check src and siteId');
@@ -512,6 +512,10 @@ var defaultOptions = {
   config: {},
   // 发送事件
   onSend: (sendEvent, sendData, reporter, event) => {},
+  // 页面跳转上报
+  onPageview: (ctx) => {},
+  // 页面停留时长统计
+  onTonp: (ctx, time) => {},
   // 错误捕捉
   onError: (error) => {},
 };
@@ -567,6 +571,12 @@ const Logger = async function (logOptions = {}) {
       Logger.options.onError && Logger.options.onError(errorData, Logger);
     };
   }
+  const et = Date.now();
+  options.onPageview &&  options.onPageview(this);
+  window.onbeforeunload = () => Logger.options.onTonp && Logger.options.onTonp(Logger, {
+    et,
+    dt: Date.now(),
+  });
   return Logger
 };
 
@@ -629,6 +639,28 @@ const install = (Vue, options) => {
       Logger.options.onError && Logger.options.onError(errorData, Logger);
     };
   }
+  Vue.mixin({
+    data: () => ({
+      PAGE_ENTER_TIME: Date.now(),
+    }),
+    created() {
+    },
+    beforeRouteUpdate(to, from, next) {
+      // 确保导航升级完成
+      this.$watch('$route', () => {
+        Logger.options.onPageview && Logger.options.onPageview(Logger);
+      });
+      next();
+    },
+    // 页面停留时间
+    beforeRouteLeave(to, from, next) {
+      Logger.options.onTonp && Logger.options.onTonp(Logger, {
+        et: this.PAGE_ENTER_TIME,
+        dt: Date.now()
+      });
+      next();
+    }
+  });
   if (!Vue.prototype.$stat) {
     Object.defineProperty(Vue.prototype, '$stat', { value: Logger.send });
   }
