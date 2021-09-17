@@ -19,7 +19,7 @@
     "test": "jest",
     "build": "rollup -c",
     "build:types": "tsc",
-    "lint": "eslint src/**",
+    "lint": "eslint src/**/*.ts",
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "prepare": "husky install",
