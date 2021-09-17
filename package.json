@@ -1,6 +1,6 @@
 {
   "name": "wd-web-log",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "a simple web log sdk",
   "main": "lib/wd-web-log.cjs.js",
   "module": "lib/wd-web-log.esm.js",
