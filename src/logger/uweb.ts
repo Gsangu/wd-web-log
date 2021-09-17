@@ -11,7 +11,7 @@
 import dynamicLoadScript from '../utils/dynamicLoadScript'
 import log from '../utils/log'
 import uweb from '../utils/uwebSDK'
-import { loggerConfig, uwebOptions, uwebConfig, logger } from '../types'
+import { loggerConfig, uwebOptions, uwebConfig, logger } from '../type'
 
 declare global {
   interface Window {

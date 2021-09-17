@@ -11,7 +11,7 @@
 import dynamicLoadScript from '../utils/dynamicLoadScript'
 import baidu from '../utils/baiduSDK'
 import log from '../utils/log'
-import { loggerConfig, baiduConfig, baiduOptions, logger } from '../types'
+import { loggerConfig, baiduConfig, baiduOptions, logger } from '../type'
 
 declare global {
   interface Window {

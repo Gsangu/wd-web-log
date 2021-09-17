@@ -7,7 +7,7 @@
  * Modified By: Gsan
  */
 import Logger from './logger/index'
-import { config } from './types'
+import { config } from './type'
 declare global {
   // eslint-disable-next-line no-unused-vars
   interface Window {

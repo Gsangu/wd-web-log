@@ -1,4 +1,4 @@
-import { baseLogger, config, reporterConfig } from '../types'
+import { baseLogger, config, reporterConfig } from '../type'
 import baidu from './baidu'
 import uweb from './uweb'
 import vue from '../vue'
