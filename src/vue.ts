@@ -7,12 +7,21 @@
  * Modified By: Gsan
  */
 import Logger from './logger/index'
-const install = (Vue, options) => {
+import { config } from './types'
+declare global {
+  // eslint-disable-next-line no-unused-vars
+  interface Window {
+    Vue: any
+    WdVueLog: any
+  }
+}
+
+const install = (Vue: any, options: config) => {
   Logger(options)
   // 注册一个全局自定义指令 `v-log`
   Vue.directive('log', {
     // 当被绑定的元素插入到 DOM 中时
-    inserted(el, binding) {
+    inserted (el, binding) {
       // 获取值
       const { value } = binding
       // 添加事件监听
@@ -22,12 +31,12 @@ const install = (Vue, options) => {
       el.addEventListener('click', function (event) {
         Logger.send(value, '', event)
       })
-    },
+    }
   })
   // v-stat
   Vue.directive('stat', {
     // 当被绑定的元素插入到 DOM 中时
-    inserted(el, binding) {
+    inserted (el, binding) {
       // 获取值
       const { value } = binding
       // 添加事件监听
@@ -35,14 +44,14 @@ const install = (Vue, options) => {
         throw new Error('Like v-stat="\'view\'"')
       }
       Logger.send(value, '')
-    },
+    }
   })
   if (Logger.options.autoError) {
     Vue.config.errorHandler = function (err, vm, info) {
       const errorData = {
         err,
         vm,
-        info,
+        info
       }
       // 上报异常
       Logger.send('error', errorData)
@@ -51,11 +60,11 @@ const install = (Vue, options) => {
   }
   Vue.mixin({
     data: () => ({
-      PAGE_ENTER_TIME: Date.now(),
+      PAGE_ENTER_TIME: Date.now()
     }),
-    created() {
+    created () {
     },
-    beforeRouteUpdate(to, from, next) {
+    beforeRouteUpdate (to, from, next) {
       // 确保导航升级完成
       this.$watch('$route', () => {
         Logger.options.onPageview && Logger.options.onPageview(Logger)
@@ -63,7 +72,7 @@ const install = (Vue, options) => {
       next()
     },
     // 页面停留时间
-    beforeRouteLeave(to, from, next) {
+    beforeRouteLeave (to, from, next) {
       Logger.options.onTonp && Logger.options.onTonp(Logger, {
         et: this.PAGE_ENTER_TIME,
         dt: Date.now()
@@ -83,5 +92,5 @@ if (typeof window !== 'undefined' && window.Vue) {
   // install(window.Vue);
 }
 export default {
-  install,
+  install
 }

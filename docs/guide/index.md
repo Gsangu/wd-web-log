@@ -1,7 +1,7 @@
 # wd-web-log
 
 > a simple web log
-> 埋点统计插件，支持腾讯 百度，友盟
+> 埋点统计插件，支持腾讯 uweb，百度，友盟
 
 [![npm](https://img.shields.io/npm/v/wd-web-log.svg)](https://www.npmjs.com/package/wd-web-log)
 [![Build Status](https://travis-ci.org/Gsangu/wd-web-log.svg?branch=master)](https://travis-ci.org/Gsangu/wd-web-log)
