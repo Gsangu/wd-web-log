@@ -1,74 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>web-log</title>
-  <script src="https://cdn.jsdelivr.net/npm/wd-web-log/dist/wd-web-log.js"></script>
-<!--   <script src="../dist/wd-web-log.js"></script> -->
-</head>
-<body>
-  <p>请打开控制台查看</p>
-  <a href="vue.html">vue</a>
-  <div id="app">
-    <div class="container">
-      <button id="test">
-        test
-      </button>
-      <button id="error">
-        error
-      </button>
-    </div>
-  </div>
-  <script>
-    var logger = null
-    WdWebLog({
-      debug: true,
-      // autoSend: true,
-      autoSend: false,
-      // 是否开启异常上报
-      autoError: true,
-      // 开启debug
-      debug: true,
-      // 上报平台 目前 mta,baidu,uweb
-      type: 'baidu',
-      // 上报平台配置
-      config: {
-        // mta
-        // sid: '',
-        // cid: '',
-        
-        // baidu
-        // src: '',
-        // siteId: '',
-
-        // uweb
-        // siteId: '',
-        // src: '',
-        // autoPageview: ''
-      },
-      // 发送事件
-      onSend: (sendEvent, sendData, reporter, event) => {
-        console.log(sendEvent)
-        // reporter.send(sendEvent, sendData)
-        reporter.send('sendEvent' + sendEvent)
-      },
-      // 错误捕捉
-      onError: (error) => {
-        console.log('异常捕捉:', error)
-      }
-    }).then(function (log) {
-      logger = log
-    // 调用mta原生方法
-      // logger.reporter.pgv();
-    });
-    document.querySelector('#test').addEventListener('click', function (e) {
-      logger.send('test')
-    })
-    document.querySelector('#error').addEventListener('click', function (e) {
-      throw new Error('test error')
-    })
-  </script>
-</body>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>wd-web-log</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Just playing around">
+    
+    <link rel="preload" href="/wd-web-log/assets/css/0.styles.6ea10d9b.css" as="style"><link rel="preload" href="/wd-web-log/assets/js/app.beea3153.js" as="script"><link rel="preload" href="/wd-web-log/assets/js/2.4a9e283d.js" as="script"><link rel="preload" href="/wd-web-log/assets/js/7.1010668f.js" as="script"><link rel="prefetch" href="/wd-web-log/assets/js/10.fe03ded8.js"><link rel="prefetch" href="/wd-web-log/assets/js/3.118a596b.js"><link rel="prefetch" href="/wd-web-log/assets/js/4.05f254cc.js"><link rel="prefetch" href="/wd-web-log/assets/js/5.c263b1cd.js"><link rel="prefetch" href="/wd-web-log/assets/js/6.b7fe8ec2.js"><link rel="prefetch" href="/wd-web-log/assets/js/8.0c7f39e3.js"><link rel="prefetch" href="/wd-web-log/assets/js/9.699fd44a.js">
+    <link rel="stylesheet" href="/wd-web-log/assets/css/0.styles.6ea10d9b.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container no-sidebar"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/wd-web-log/" aria-current="page" class="home-link router-link-exact-active router-link-active"><img src="/wd-web-log/logo.png" alt="wd-web-log" class="logo"> <span class="site-name can-hide">wd-web-log</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/wd-web-log/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  首页
+</a></div><div class="nav-item"><a href="/wd-web-log/guide/" class="nav-link">
+  指南
+</a></div><div class="nav-item"><a href="/wd-web-log/api/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="https://github.dev/Gsangu/wd-web-log" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/wd-web-log/" aria-current="page" class="nav-link router-link-exact-active router-link-active">
+  首页
+</a></div><div class="nav-item"><a href="/wd-web-log/guide/" class="nav-link">
+  指南
+</a></div><div class="nav-item"><a href="/wd-web-log/api/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="https://github.dev/Gsangu/wd-web-log" target="_blank" rel="noopener noreferrer" class="nav-link external">
+  Github
+  <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></div> <!----></nav>  <!----> </aside> <main aria-labelledby="main-title" class="home"><header class="hero"><img src="/wd-web-log/logo.png" alt="hero"> <h1 id="main-title">
+      wd-web-log
+    </h1> <p class="description">
+      高度自定义埋点工具
+    </p> <p class="action"><a href="/wd-web-log/guide/" class="nav-link action-button">
+  Get Start
+</a></p></header> <div class="features"><div class="feature"><h2>持续迭代</h2> <p>持续维护更新，方便日常开发</p></div></div> <div class="theme-default-content custom content__default"></div> <div class="footer">
+    MIT Licensed | Copyright © 2021-present Gsan
+  </div></main></div><div class="global-ui"></div></div>
+    <script src="/wd-web-log/assets/js/app.beea3153.js" defer></script><script src="/wd-web-log/assets/js/2.4a9e283d.js" defer></script><script src="/wd-web-log/assets/js/7.1010668f.js" defer></script>
+  </body>
 </html>
