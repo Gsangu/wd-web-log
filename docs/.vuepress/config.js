@@ -15,9 +15,7 @@ module.exports = {
         '',
       ],
       '/api/': [
-          'queue',
-          'stack',
-          'day',
+          'config'
       ],
       '/changelog/': ['']
     }

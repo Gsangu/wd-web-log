@@ -2,5 +2,4 @@
 
 **数据结构**
 
-- [Queue](/dry/api/queue)
-- [Stack](/dry/api/stack)
+- [Config](/wd-web-log/api/config)
